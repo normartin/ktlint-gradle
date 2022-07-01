@@ -38,7 +38,6 @@ abstract class KtLintWorkAction : WorkAction<KtLintWorkAction.KtLintWorkParamete
             .orNull
             ?.asFile
             ?.absolutePath
-        val userData = generateUserData()
         val debug = parameters.debug.get()
         val formatSource = parameters.formatSource.getOrElse(false)
 
@@ -49,11 +48,10 @@ abstract class KtLintWorkAction : WorkAction<KtLintWorkAction.KtLintWorkParamete
 
         parameters.filesToLint.files.forEach {
             val errors = mutableListOf<Pair<LintError, Boolean>>()
-            val ktLintParameters = KtLint.Params(
+            val ktLintParameters = KtLint.ExperimentalParams(
                 fileName = it.absolutePath,
                 text = it.readText(),
                 ruleSets = ruleSets,
-                userData = userData,
                 debug = debug,
                 editorConfigPath = additionalEditorConfig,
                 script = !it.name.endsWith(".kt", ignoreCase = true),
@@ -112,18 +110,6 @@ abstract class KtLintWorkAction : WorkAction<KtLintWorkAction.KtLintWorkParamete
             // Calling trimMemory() will also reset internal loaded `.editorconfig` cache
             KtLint.trimMemory()
         }
-    }
-
-    private fun generateUserData(): Map<String, String> {
-        val userData = mutableMapOf(
-            "android" to parameters.android.get().toString()
-        )
-        val disabledRules = parameters.disabledRules.get()
-        if (disabledRules.isNotEmpty()) {
-            userData["disabled_rules"] = disabledRules.joinToString(separator = ",")
-        }
-
-        return userData.toMap()
     }
 
     private fun loadRuleSetsAndFilterThem(
