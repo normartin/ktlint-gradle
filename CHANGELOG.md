@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+-   Add support for KtLint version `0.46.1`
+-   Require Kotlin version `1.6`
+
 ## [10.3.0] - 2022-05-03
 
 ### Added
